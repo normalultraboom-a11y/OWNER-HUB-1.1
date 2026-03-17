@@ -1,0 +1,108 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local UIS = game:GetService("UserInputService")
+
+local Window = Rayfield:CreateWindow({
+   Name = "OWNER HUB | dev: progame666991",
+   LoadingTitle = "OWNER HUB SYSTEM",
+   LoadingSubtitle = "by progame666991",
+   ConfigurationSaving = {
+      Enabled = false
+   },
+   KeySystem = false
+})
+
+-- KEYBIND TOGGLE (Menüyü K tuşu ile gizle/aç)
+local isVisible = true
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.K then
+        isVisible = not isVisible
+        game:GetService("CoreGui").RayfieldGui.Main:FindFirstChild("Container").Visible = isVisible
+    end
+end)
+
+-- SEKMELER
+local MainTab = Window:CreateTab("GUI Opener", 4483362458)
+local DoorTab = Window:CreateTab("Door Bypass", 4483362458)
+local OwnerTab = Window:CreateTab("Owner Tools", 4483362458)
+local InfoTab = Window:CreateTab("Info", 4483362458)
+
+-- [GUI OPENER SYSTEM]
+local function toggleGui(name)
+    local playerGui = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+    local lowerName = string.lower(name)
+    for _, v in pairs(playerGui:GetDescendants()) do
+        if v:IsA("Frame") or v:IsA("ScrollingFrame") or v:IsA("CanvasGroup") then
+            if string.find(string.lower(v.Name), lowerName) then
+                if not string.find(string.lower(v.Name), "rayfield") then
+                    v.Visible = not v.Visible
+                end
+            end
+        end
+    end
+end
+
+MainTab:CreateSection("Access Panels")
+local roles = {"HeadAdmin", "Admin", "Moderator", "Tester", "Developer", "VIP", "Plus", "Premium", "Staff", "Member"}
+for _, role in pairs(roles) do
+    MainTab:CreateButton({Name = "Toggle " .. role .. " GUI", Callback = function() toggleGui(role) end})
+end
+
+-- [ULTRA DOOR BYPASS SYSTEM]
+DoorTab:CreateSection("Advanced Obstacle Scanner")
+DoorTab:CreateButton({
+   Name = "Mega Scan & Delete Doors",
+   Info = "Scans for all types of restricted barriers (Including GP).",
+   Callback = function()
+       local count = 0
+       local keywords = {"door", "gate", "wall", "border", "pass", "entrance", "barrier", "block", "fence", "glass", "laser"}
+       local accessTypes = {
+           "vip", "admin", "staff", "mod", "member", "gamepass", "headadmin", "tester", 
+           "premium", "badge", "rank", "group", "level", "locked", "restricted", "owner", 
+           "host", "donator", "private", "access", "requirement", "gp"
+       }
+       
+       for _, v in pairs(game.Workspace:GetDescendants()) do
+           if v:IsA("BasePart") or v:IsA("Model") then
+               local objName = string.lower(v.Name)
+               local hasKeyword = false
+               local hasAccess = false
+               
+               for _, k in pairs(keywords) do if string.find(objName, k) then hasKeyword = true break end end
+               for _, a in pairs(accessTypes) do if string.find(objName, a) then hasAccess = true break end end
+               
+               if hasKeyword and hasAccess then 
+                   v:Destroy() 
+                   count = count + 1 
+               end
+           end
+       end
+       
+       Rayfield:Notify({
+           Title = "Scan Complete", 
+           Content = "Removed " .. count .. " objects from the map.", 
+           Duration = 4
+       })
+   end,
+})
+
+-- [OWNER SECTION]
+OwnerTab:CreateSection("Identity Tools")
+OwnerTab:CreateButton({
+   Name = "Become Owner (NOT FE)",
+   Callback = function()
+       local player = game:GetService("Players").LocalPlayer
+       if game.CreatorId ~= 0 then
+           player.UserId = game.CreatorId
+           Rayfield:Notify({Title = "Owner Spoof", Content = "ID set to: " .. tostring(game.CreatorId), Duration = 4})
+       end
+   end,
+})
+
+-- [INFO SECTION]
+InfoTab:CreateSection("Credits")
+InfoTab:CreateLabel("Developer: progame666991")
+InfoTab:CreateLabel("Press 'K' to Hide/Show Hub")
+InfoTab:CreateButton({Name = "Destroy HUB", Callback = function() Rayfield:Destroy() end})
+
+Rayfield:Notify({Title = "OWNER HUB V23", Content = "Ready for action.", Duration = 5})
+
